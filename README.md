@@ -1,6 +1,4 @@
-# An example Django + Docker app
-
-![CI](https://github.com/nickjj/docker-django-example/workflows/CI/badge.svg?branch=main)
+# 🐳 An example Django + Docker app
 
 You could use this example app as a base for your new project or as a guide to
 Dockerize your existing Django app.
@@ -14,12 +12,12 @@ practices](https://nickjanetakis.com/blog/best-practices-around-production-ready
 based on building and deploying dozens of assorted Dockerized web apps since
 late 2014.
 
-**This app is using Django 5.1.1 and Python 3.12.6**. The screenshot doesn't get
-updated every time I bump the versions:
+**This app is using Django 5.2.1 and Python 3.13.3**. The screenshot shows
+`X.X.X` since they get updated regularly:
 
 [![Screenshot](.github/docs/screenshot.jpg)](https://github.com/nickjj/docker-django-example/blob/main/.github/docs/screenshot.jpg?raw=true)
 
-## Table of contents
+## 🧾 Table of contents
 
 - [Tech stack](#tech-stack)
 - [Notable opinions and extensions](#notable-opinions-and-extensions)
@@ -35,7 +33,7 @@ updated every time I bump the versions:
   - [Deploy to production](#deploy-to-production)
 - [About the author](#about-the-author)
 
-## Tech stack
+## 🧬 Tech stack
 
 If you don't like some of these choices that's no problem, you can swap them
 out for something else on your own.
@@ -75,7 +73,7 @@ guides to get up and running in no time.
 Personally I'm going to be using Hotwire Turbo + Stimulus in most newer
 projects.
 
-## Notable opinions and extensions
+## 🍣 Notable opinions and extensions
 
 Django is an opinionated framework and I've added a few extra opinions based on
 having Dockerized and deployed a number of Django projects. Here's a few (but
@@ -86,9 +84,7 @@ not all) note worthy additions and changes.
     - *[whitenoise](https://github.com/evansd/whitenoise)* for serving static files
     - *[django-debug-toolbar](https://github.com/jazzband/django-debug-toolbar)* for displaying info about a request
 - **Linting and formatting**:
-    - *[flake8](https://github.com/PyCQA/flake8)* is used to lint the code base
-    - *[isort](https://github.com/PyCQA/isort)* is used to auto-sort Python imports
-    - *[black](https://github.com/psf/black)* is used to format the code base
+    - *[ruff](https://github.com/astral-sh/ruff)* is used to lint and format the code base
 - **Django apps**:
     - Add `pages` app to render a home page
     - Add `up` app to provide a few health check pages
@@ -109,15 +105,12 @@ not all) note worthy additions and changes.
 
 Besides the Django app itself:
 
+- [uv](https://github.com/astral-sh/uv) is used for package management instead of `pip3` (builds on my machine are ~10x faster!)
 - Docker support has been added which would be any files having `*docker*` in
   its name
 - GitHub Actions have been set up
-- A `requirements-lock.txt` file has been introduced using `pip3`. The
-  management of this file is fully automated by the commands found in the `run`
-  file. We'll cover this in more detail when we talk about [updating
-  dependencies](#updating-dependencies).
 
-## Running this app
+## 🚀 Running this app
 
 You'll need to have [Docker installed](https://docs.docker.com/get-docker/).
 It's available on Windows, macOS and most distros of Linux. If you're new to
@@ -199,13 +192,6 @@ Visit <http://localhost:8000> in your favorite browser.
 ./run lint
 ```
 
-#### Sorting Python imports in the code base:
-
-```sh
-# You should see that everything is unchanged (imports are already formatted).
-./run format:imports
-```
-
 #### Formatting the code base:
 
 ```sh
@@ -213,7 +199,7 @@ Visit <http://localhost:8000> in your favorite browser.
 ./run format
 ```
 
-*There's also a `./run quality` command to run the above 3 commands together.*
+*There's also a `./run quality` command to run the above commands together.*
 
 #### Running the test suite:
 
@@ -232,7 +218,7 @@ docker compose down
 You can start things up again with `docker compose up` and unlike the first
 time it should only take seconds.
 
-## Files of interest
+## 🔍 Files of interest
 
 I recommend checking out most files and searching the code base for `TODO:`,
 but please review the `.env` and `run` files before diving into the rest of the
@@ -269,7 +255,7 @@ functions as you want. This file's purpose is to make your experience better!
 `alias run=./run` in your `~/.bash_aliases` or equivalent file. Then you'll be
 able to run `run` instead of `./run`.*
 
-## Running a script to automate renaming the project
+## ✨ Running a script to automate renaming the project
 
 The app is named `hello` right now but chances are your app will be a different
 name. Since the app is already created we'll need to do a find / replace on a
@@ -353,41 +339,35 @@ to it. If you want to reference me directly please link to my site at
 <https://nickjanetakis.com>. You don't have to do this, but it would be very
 much appreciated!
 
-## Updating dependencies
+## 🛠 Updating dependencies
 
-Let's say you've customized your app and it's time to make a change to your
-`requirements.txt` or `package.json` file.
+You can run `./run uv:outdated` or `./run yarn:outdated` to get a list of
+outdated dependencies based on what you currently have installed. Once you've
+figured out what you want to update, go make those updates in your
+`pyproject.toml` and / or `package.json` file.
 
-Without Docker you'd normally run `pip3 install -r requirements.txt` or `yarn
-install`. With Docker it's basically the same thing and since these commands
-are in our `Dockerfile` we can get away with doing a `docker compose build` but
-don't run that just yet.
+Or, let's say you've customized your app and it's time to add a new dependency,
+either for Python or Node.
 
 #### In development:
 
-You can run `./run pip3:outdated` or `./run yarn:outdated` to get a list of
-outdated dependencies based on what you currently have installed. Once you've
-figured out what you want to update, go make those updates in your
-`requirements.txt` and / or `assets/package.json` file.
+##### Option 1
 
-Then to update your dependencies you can run `./run pip3:install` or `./run
-yarn:install`. That'll make sure any lock files get copied from Docker's image
-(thanks to volumes) into your code repo and now you can commit those files to
-version control like usual.
+1. Directly edit `pyproject.toml` or `assets/package.json` to add your package
+2. `./run deps:install` or `./run deps:install --no-build`
+    - The `--no-build` option will only write out a new lock file without re-building your image
 
-You can check out the
-[run](https://github.com/nickjj/docker-django-example/blob/main/run) file to see
-what these commands do in more detail.
+##### Option 2
 
-As for the requirements' lock file, this ensures that the same exact versions
-of every package you have (including dependencies of dependencies) get used the
-next time you build the project. This file is the output of running `pip3
-freeze`. You can check how it works by looking at
-[bin/pip3-install](https://github.com/nickjj/docker-django-example/blob/main/bin/pip3-install).
+1. Run `./run uv add mypackage --no-sync` or `run yarn add mypackage --no-lockfile` which will update your `pyproject.toml` or `assets/package.json` with the latest version of that package but not install it
+2. The same step as step 2 from option 1
 
-You should never modify the lock files by hand. Add your top level Python
-dependencies to `requirements.txt` and your top level JavaScript dependencies
-to `assets/package.json`, then run the `./run` command(s) mentioned earlier.
+Either option is fine, it's up to you based on what's more convenient at the
+time. You can modify the above workflows for updating an existing package or
+removing one as well.
+
+You can also access `uv` and `yarn` in Docker with `./run uv` and `./run yarn`
+after you've upped the project.
 
 #### In CI:
 
@@ -401,14 +381,14 @@ under the `ci:test` function.
 This is usually a non-issue since you'll be pulling down pre-built images from
 a Docker registry but if you decide to build your Docker images directly on
 your server you could run `docker compose build` as part of your deploy
-pipeline.
+pipeline which is similar to how it would work in CI.
 
-## See a way to improve something?
+## 🤝 See a way to improve something?
 
 If you see anything that could be improved please open an issue or start a PR.
 Any help is much appreciated!
 
-## Additional resources
+## 🌎 Additional resources
 
 Now that you have your app ready to go, it's time to build something cool! If
 you want to learn more about Docker, Django and deploying a Django app here's a
@@ -419,7 +399,7 @@ couple of free and paid resources. There's Google too!
 #### Official documentation
 
 - <https://docs.docker.com/>
-- <https://docs.djangoproject.com/en/5.1/>
+- <https://docs.djangoproject.com/en/5.2/>
 
 #### Courses / books
 
@@ -437,7 +417,7 @@ you want to get notified when it launches with a discount and potentially get
 free videos while the course is being developed then [sign up here to get
 notified](https://nickjanetakis.com/courses/deploy-to-production).
 
-## About the author
+## 👀 About the author
 
 - Nick Janetakis | <https://nickjanetakis.com> | [@nickjanetakis](https://twitter.com/nickjanetakis)
 

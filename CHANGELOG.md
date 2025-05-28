@@ -10,26 +10,46 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - `setuptools` Python dependency since Docker recently removed this from the official Python image
+- `./run pip3 [...]` to run any Pip command
+- `./run yarn [...]` to run any Yarn command
+- `./run lint:shell` for linting shell scripts with ShellCheck
+- `./run format:shell` for formatting shell scripts with shfmt
 
 ### Changed
 
+- Replace `./run pip3:install` with `./run deps:install [--no-build]` to install any deps
+- Replace `./run yarn:install` with `./run deps:install [--no-build]` to install any deps
+- Allow overriding `$TTY` as an environment variable in the `run` script
+- Use `.hadolint.yaml` to configure Hadolint instead of inline flags
+- Replace Black, flake8 and isort with Ruff
+- Replace `pip3` with `uv` for Python package management (~10x speed boost!)
+- Refactor `Dockerfile` to use multi-stage app builds (~50% / 250MB image size reduction!)
+
 #### Languages and services
 
-- Update `Python` to `3.12.6`
-- Update `Postgres` to `16.4`
-- Update `Redis` to `7.4.0`
+- Update `Python` to `3.13.3`
+- Update `Node` to `22.15.0`
+- Update `Postgres` to `17.5`
+- Update `Redis` to `8.0.0`
 
 #### Back-end dependencies
 
-- Update `Django` to `5.1.1`
+- Update `celery` to `5.5.2`
+- Update `django-debug-toolbar` to `5.2.0`
+- Update `django` to `5.2.1`
 - Update `gunicorn` to `23.0.0`
-- Update `psycopg` to `3.2.2`
+- Update `psycopg` to `3.2.7`
+- Update `redis` to `6.0.0`
+- Update `ruff` to `0.11.8`
+- Update `setuptools` to `80.3.1`
+- Update `whitenoise` to `6.9.0`
 
 #### Front-end dependencies
 
-- Update `esbuild` to `0.24.0`
-- Update `postcss` to `8.4.47`
-- Update `tailwindcss` to `3.4.13`
+- Update `@tailwindcss/cli` to `4.1.5`
+- Update `@tailwindcss/postcss` to `4.1.5`
+- Update `esbuild` to `0.25.4`
+- Update `tailwindcss` to `4.1.5`
 
 ## [0.11.0] - 2024-08-09
 
